@@ -85,4 +85,17 @@ public class JsonUtil {
         return exercise;
     }
 
+    public List<Exercise> getListExercise(Context context,String type){
+        String json=AssetsUtil.inputStreamToString(context,"jsondata/exercise.json");
+        Gson gson = new GsonBuilder().create();
+        Exercise[] exercises = gson.fromJson(json,Exercise[].class);
+        List<Exercise> list = new ArrayList<>();
+        for (int i=0;i<exercises.length;i++)
+            if (exercises[i].getBodyPart().equals(type)){
+                list.add(exercises[i]);
+            }
+        return list;
+    }
+
+
 }

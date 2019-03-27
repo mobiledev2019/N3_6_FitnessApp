@@ -1,5 +1,6 @@
 package com.example.hoang.fitness.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.hoang.fitness.R;
+import com.example.hoang.fitness.activities.PickExerciseActivity;
 import com.example.hoang.fitness.adapters.CustomWorkoutAdapter;
 import com.example.hoang.fitness.models.Workout;
 import com.example.hoang.fitness.utils.JsonUtil;
@@ -38,6 +40,8 @@ public class CustomFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_custom, container, false);
         ButterKnife.bind(this,view);
+        getActivity().findViewById(R.id.tv_title_main).setVisibility(View.GONE);
+        getActivity().findViewById(R.id.btn_setting).setVisibility(View.GONE);
         //list = new ArrayList<>();
         list = JsonUtil.getInstance().getListWorkout(getContext());
         adapter = new CustomWorkoutAdapter(getContext(),list);
@@ -54,10 +58,13 @@ public class CustomFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+        Intent intent = new Intent(getContext(), PickExerciseActivity.class);
+        startActivity(intent);
         if (list.size()==0){
             mTapToStart.setVisibility(View.VISIBLE);
         } else {
             mTapToStart.setVisibility(View.GONE);
         }
+
     }
 }
