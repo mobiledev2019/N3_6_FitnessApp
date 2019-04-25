@@ -43,4 +43,8 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.2'
     //youtube
     implementation files('libs/YouTubeAndroidPlayerApi.jar')
+    //gif
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.1.+'
+    //calendar
+    implementation 'com.github.prolificinteractive:material-calendarview:2.0.1'
 }

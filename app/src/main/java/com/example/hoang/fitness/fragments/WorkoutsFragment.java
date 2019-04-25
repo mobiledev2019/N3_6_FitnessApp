@@ -31,6 +31,8 @@ public class WorkoutsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_workouts, container,false);
         ButterKnife.bind(this,view);
+        getActivity().findViewById(R.id.tv_title_main).setVisibility(View.VISIBLE);
+        getActivity().findViewById(R.id.btn_setting).setVisibility(View.VISIBLE);
         list = JsonUtil.getInstance().getListWorkout(getContext());
         workoutAdapter = new WorkoutAdapter(getContext(),list.subList(0,6));
         mWorkOut.setAdapter(workoutAdapter);

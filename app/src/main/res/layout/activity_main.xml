@@ -49,6 +49,4 @@
         app:menu="@menu/navigation"
         android:layout_alignParentBottom="true"
         />
-
-
 </RelativeLayout>

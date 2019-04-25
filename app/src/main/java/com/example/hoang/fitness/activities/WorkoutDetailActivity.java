@@ -1,5 +1,6 @@
 package com.example.hoang.fitness.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -66,6 +67,8 @@ public class WorkoutDetailActivity extends AppCompatActivity implements View.OnC
 
     @Override
     public void onClick(View v) {
-
+        Intent intent = new Intent(WorkoutDetailActivity.this,PlayingActivity.class);
+        intent.putExtra("WORKOUT_ID",WORKOUT_ID);
+        startActivity(intent);
     }
 }

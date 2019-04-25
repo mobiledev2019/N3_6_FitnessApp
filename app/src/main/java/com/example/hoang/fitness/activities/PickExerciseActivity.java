@@ -36,7 +36,7 @@ public class PickExerciseActivity extends AppCompatActivity implements View.OnCl
     PickExerciseAdapter adapter;
     private int mStep = 1;
     TextView tv_title_toolbar;
-    Button tv_cancel_toolbar;
+    TextView tv_cancel_toolbar;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

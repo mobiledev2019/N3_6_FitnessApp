@@ -44,7 +44,7 @@ public class CustomFragment extends Fragment implements View.OnClickListener {
         getActivity().findViewById(R.id.btn_setting).setVisibility(View.GONE);
         //list = new ArrayList<>();
         list = JsonUtil.getInstance().getListWorkout(getContext());
-        adapter = new CustomWorkoutAdapter(getContext(),list);
+        adapter = new CustomWorkoutAdapter(getContext(),list.subList(0,2));
         mCustomWorkouts.setAdapter(adapter);
         mCustomWorkouts.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));
         mAddCustomWorkouts.setOnClickListener(this::onClick);

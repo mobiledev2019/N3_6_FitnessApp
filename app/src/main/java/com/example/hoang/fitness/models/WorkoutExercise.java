@@ -3,7 +3,9 @@ package com.example.hoang.fitness.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class WorkoutExercise {
+import java.io.Serializable;
+
+public class WorkoutExercise implements Serializable {
 
     @SerializedName("get_ready")
     @Expose
