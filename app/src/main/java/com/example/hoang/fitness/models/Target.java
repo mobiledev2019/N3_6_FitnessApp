@@ -1,14 +1,31 @@
 package com.example.hoang.fitness.models;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 public class Target implements Serializable {
+    @SerializedName("name")
+    @Expose
     private String name;
+    @SerializedName("workout")
+    @Expose
     private Workout workout;
+    @SerializedName("numDay")
+    @Expose
     private int numDay;
+    @SerializedName("state")
+    @Expose
     private int state;
+    @SerializedName("hour")
+    @Expose
     private String hour;
+    @SerializedName("minute")
+    @Expose
     private String minute;
+    @SerializedName("am_pm")
+    @Expose
     private String am_pm;
     public Target() {
     }

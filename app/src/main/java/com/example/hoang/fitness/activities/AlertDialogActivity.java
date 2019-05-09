@@ -2,7 +2,6 @@ package com.example.hoang.fitness.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -55,10 +54,10 @@ public class AlertDialogActivity extends Activity {
                         FileUtil.ghiFileTarget(AlertDialogActivity.this,list);
                         try {
                             TargetAdapter.instance.update();
+                            TargetFragment.alarmManager.cancel(TargetFragment.pendingIntent[vt]);
                         } catch (Exception e){
 
                         }
-                        TargetFragment.alarmManager.cancel(TargetFragment.pendingIntent[vt]);
                         dialog.cancel();
                         finish();
                     }
