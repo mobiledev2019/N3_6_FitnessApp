@@ -19,6 +19,16 @@
                 <!--<category android:name="android.intent.category.LAUNCHER" />-->
             <!--</intent-filter>-->
         </activity>
+        <activity android:name=".activities.SignupActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".activities.SigninActivity"
+            >
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        </activity>
         <activity android:name=".activities.TestActivity"
             android:launchMode="singleTop"
             >
@@ -62,6 +72,11 @@
         </activity>
         <activity android:name=".activities.AlertDialogActivity"
             android:theme="@android:style/Theme.Material.Dialog.Alert"
+            >
+        </activity>
+        <activity android:name=".activities.SettingActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".activities.MainActivity"
             >
         </activity>
         <receiver android:name=".receiver.AlarmReceiver">

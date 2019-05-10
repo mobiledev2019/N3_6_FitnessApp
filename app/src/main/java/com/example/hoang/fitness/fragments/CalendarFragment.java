@@ -2,7 +2,6 @@ package com.example.hoang.fitness.fragments;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,14 +9,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import com.example.hoang.fitness.R;
-import com.example.hoang.fitness.activities.FinishActivity;
 import com.example.hoang.fitness.utils.SharedPrefsUtils;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.DayViewDecorator;
 import com.prolificinteractive.materialcalendarview.DayViewFacade;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
-import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 import com.prolificinteractive.materialcalendarview.spans.DotSpan;
 
 import java.util.ArrayList;
@@ -51,17 +54,13 @@ public class CalendarFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_calendar, container,false);
         ButterKnife.bind(this,view);
-        WORKOUT_NUM = SharedPrefsUtils.getIntegerPreference(getActivity(),"WORKOUT_NUM",0);
-        MINUTES_NUM = SharedPrefsUtils.getIntegerPreference(getActivity(),"MINUTES_NUM",0);
-        CALORIES_NUM = SharedPrefsUtils.getIntegerPreference(getActivity(),"CALORIES_NUM",0);
-        CUR_STREAK_NUM = SharedPrefsUtils.getIntegerPreference(getActivity(),"CUR_STREAK_NUM",0);
-        BEST_STREAK_NUM = SharedPrefsUtils.getIntegerPreference(getActivity(),"BEST_STREAK_NUM",0);
+//        WORKOUT_NUM = SharedPrefsUtils.getIntegerPreference(getActivity(),"WORKOUT_NUM",0);
+//        MINUTES_NUM = SharedPrefsUtils.getIntegerPreference(getActivity(),"MINUTES_NUM",0);
+//        CALORIES_NUM = SharedPrefsUtils.getIntegerPreference(getActivity(),"CALORIES_NUM",0);
+//        CUR_STREAK_NUM = SharedPrefsUtils.getIntegerPreference(getActivity(),"CUR_STREAK_NUM",0);
+//        BEST_STREAK_NUM = SharedPrefsUtils.getIntegerPreference(getActivity(),"BEST_STREAK_NUM",0);
+        readResultFromFireBase();
         calCurStreakNum();
-        mWorkoutNum.setText(WORKOUT_NUM+"");
-        mMinutesNum.setText(MINUTES_NUM+"");
-        mCaloriesNum.setText(CALORIES_NUM+"");
-        mCurStreakNum.setText(CUR_STREAK_NUM+"");
-        mBestStreakNum.setText(BEST_STREAK_NUM+"");
         dates = getListDates();
         mCalendar.setCurrentDate(CalendarDay.today());
         mCalendar.setDateSelected(CalendarDay.today(),true);
@@ -93,6 +92,7 @@ public class CalendarFragment extends Fragment {
                 calendarDay = CalendarDay.from(calendarDay.getDate().plusDays(1));
                 if (!calendarDay.equals(calendarToday)){
                     CUR_STREAK_NUM = 0;
+                    addResultToFireBase();
                 }
             }
         }
@@ -160,5 +160,46 @@ public class CalendarFragment extends Fragment {
 
         }
         return list;
+    }
+
+    private void readResultFromFireBase(){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("result");
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                try {
+                    long WORKOUT_NUM = (long) dataSnapshot.child("WORKOUT_NUM").getValue();
+                    long MINUTES_NUM = (long) dataSnapshot.child("MINUTES_NUM").getValue();
+                    long CALORIES_NUM = (long) dataSnapshot.child("CALORIES_NUM").getValue();
+                    long CUR_STREAK_NUM = (long) dataSnapshot.child("CUR_STREAK_NUM").getValue();
+                    long BEST_STREAK_NUM = (long) dataSnapshot.child("BEST_STREAK_NUM").getValue();
+                    CalendarFragment.this.WORKOUT_NUM = (int) WORKOUT_NUM;
+                    CalendarFragment.this.MINUTES_NUM = (int) MINUTES_NUM;
+                    CalendarFragment.this.CALORIES_NUM = (int) CALORIES_NUM;
+                    CalendarFragment.this.CUR_STREAK_NUM = (int) CUR_STREAK_NUM;
+                    CalendarFragment.this.BEST_STREAK_NUM = (int) BEST_STREAK_NUM;
+                    mWorkoutNum.setText(WORKOUT_NUM+"");
+                    mMinutesNum.setText(MINUTES_NUM+"");
+                    mCaloriesNum.setText(CALORIES_NUM+"");
+                    mCurStreakNum.setText(CUR_STREAK_NUM+"");
+                    mBestStreakNum.setText(BEST_STREAK_NUM+"");
+                   // Toast.makeText(getContext(),"Loaded",Toast.LENGTH_SHORT).show();
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void addResultToFireBase(){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("result");
+        myRef.child("CUR_STREAK_NUM").setValue(CUR_STREAK_NUM);
     }
 }

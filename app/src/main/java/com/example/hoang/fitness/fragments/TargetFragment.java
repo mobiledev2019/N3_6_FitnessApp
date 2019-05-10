@@ -15,7 +15,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -193,14 +192,10 @@ public class TargetFragment extends Fragment implements View.OnClickListener {
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                //HashMap<String, Target> userModelHashMap = (HashMap<String, Target>) dataSnapshot.getValue();
-                //ArrayList<UserModel> userModelList = new ArrayList<>(userModelHashMap.values());
-
                 List<Target> list = new ArrayList<>();
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     Target value = data.getValue(Target.class);
                     list.add(value);
-                    Log.d("XXXXXXXXXXXXX",value.getHour());
                 }
                 updateListTarget(list);
                 Toast.makeText(getContext(),"Loaded",Toast.LENGTH_SHORT).show();
@@ -230,6 +225,5 @@ public class TargetFragment extends Fragment implements View.OnClickListener {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("targets");
         myRef.child(target.getName()).setValue(target);
-        Toast.makeText(getActivity(), "Added", Toast.LENGTH_SHORT).show();
     }
 }

@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.hoang.fitness.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -18,11 +20,13 @@ public class TestActivity extends AppCompatActivity {
         findViewById(R.id.btn_add).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //firebase
-                // Write a message to the database
+
+                FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
-                DatabaseReference myRef = database.getReference("message");
-                myRef.setValue("Hello, World!");
+                DatabaseReference myRef = database.getReference().child("users");
+                DatabaseReference currentUserDB = myRef.child(user.getUid());
+                currentUserDB.child("message").setValue("abc");
                 Toast.makeText(TestActivity.this,"Added",Toast.LENGTH_SHORT).show();
             }
         });

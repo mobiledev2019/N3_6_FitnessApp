@@ -4,12 +4,15 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.example.hoang.fitness.R;
 import com.example.hoang.fitness.adapters.TargetAdapter;
 import com.example.hoang.fitness.fragments.TargetFragment;
@@ -18,12 +21,14 @@ import com.example.hoang.fitness.models.Workout;
 import com.example.hoang.fitness.utils.FileUtil;
 import com.example.hoang.fitness.utils.JsonUtil;
 import com.example.hoang.fitness.utils.SharedPrefsUtils;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -46,11 +51,13 @@ public class FinishActivity extends AppCompatActivity {
     private List<Target> list = new ArrayList<>();
     private Target target;
     private int vt = -1;
-    int WORKOUT_NUM;
-    int MINUTES_NUM;
-    int CALORIES_NUM;
-    int CUR_STREAK_NUM;
-    int BEST_STREAK_NUM;
+    int WORKOUT_NUM=0;
+    int MINUTES_NUM=0;
+    int CALORIES_NUM=0;
+    int CUR_STREAK_NUM=0;
+    int BEST_STREAK_NUM=0;
+    int CUR_STREAK = 0;
+    int BEST_STREAK = 0;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,21 +70,22 @@ public class FinishActivity extends AppCompatActivity {
         mNum.setText(workout.getExercises().size()+"");
         mMin.setText(workout.getTime()+"");
         mCalo.setText(workout.getCalorie()+"");
+        readResultFromFireBase();
+        calCurStreakNum();
         mSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                WORKOUT_NUM = SharedPrefsUtils.getIntegerPreference(FinishActivity.this,"WORKOUT_NUM",0);
-                MINUTES_NUM = SharedPrefsUtils.getIntegerPreference(FinishActivity.this,"MINUTES_NUM",0);
-                CALORIES_NUM = SharedPrefsUtils.getIntegerPreference(FinishActivity.this,"CALORIES_NUM",0);
-                CUR_STREAK_NUM = SharedPrefsUtils.getIntegerPreference(FinishActivity.this,"CUR_STREAK_NUM",0);
-                BEST_STREAK_NUM = SharedPrefsUtils.getIntegerPreference(FinishActivity.this,"BEST_STREAK_NUM",0);
-                calCurStreakNum();
-                calBestStreakNum();
-                SharedPrefsUtils.setIntegerPreference(FinishActivity.this,"WORKOUT_NUM",WORKOUT_NUM+1);
-                SharedPrefsUtils.setIntegerPreference(FinishActivity.this,"MINUTES_NUM",MINUTES_NUM+workout.getTime());
-                SharedPrefsUtils.setIntegerPreference(FinishActivity.this,"CALORIES_NUM",CALORIES_NUM+workout.getCalorie());
-                SharedPrefsUtils.setIntegerPreference(FinishActivity.this,"CUR_STREAK_NUM",CUR_STREAK_NUM);
-                SharedPrefsUtils.setIntegerPreference(FinishActivity.this,"BEST_STREAK_NUM",BEST_STREAK_NUM);
+//                WORKOUT_NUM = SharedPrefsUtils.getIntegerPreference(FinishActivity.this,"WORKOUT_NUM",0);
+//                MINUTES_NUM = SharedPrefsUtils.getIntegerPreference(FinishActivity.this,"MINUTES_NUM",0);
+//                CALORIES_NUM = SharedPrefsUtils.getIntegerPreference(FinishActivity.this,"CALORIES_NUM",0);
+//                CUR_STREAK_NUM = SharedPrefsUtils.getIntegerPreference(FinishActivity.this,"CUR_STREAK_NUM",0);
+//                BEST_STREAK_NUM = SharedPrefsUtils.getIntegerPreference(FinishActivity.this,"BEST_STREAK_NUM",0);
+//                SharedPrefsUtils.setIntegerPreference(FinishActivity.this,"WORKOUT_NUM",WORKOUT_NUM+1);
+//                SharedPrefsUtils.setIntegerPreference(FinishActivity.this,"MINUTES_NUM",MINUTES_NUM+workout.getTime());
+//                SharedPrefsUtils.setIntegerPreference(FinishActivity.this,"CALORIES_NUM",CALORIES_NUM+workout.getCalorie());
+//                SharedPrefsUtils.setIntegerPreference(FinishActivity.this,"CUR_STREAK_NUM",CUR_STREAK_NUM);
+//                SharedPrefsUtils.setIntegerPreference(FinishActivity.this,"BEST_STREAK_NUM",BEST_STREAK_NUM);
+                addResultToFireBase();
                 if (TARGET_NAME!=null){
                     list = FileUtil.docFileTarget(FinishActivity.this,"target.txt");
                     TARGET_NAME = getIntent().getStringExtra("TARGET_NAME");
@@ -115,6 +123,7 @@ public class FinishActivity extends AppCompatActivity {
         });
     }
     private void calCurStreakNum(){
+        CUR_STREAK = 0;
         ArrayList<Integer> listDay = getListDay();
         ArrayList<Integer> listMonth = getListMonth();
         ArrayList<Integer> listYear = getListYear();
@@ -126,20 +135,18 @@ public class FinishActivity extends AppCompatActivity {
                 addDate();
                 calendarDay = CalendarDay.from(calendarDay.getDate().plusDays(1));
                 if (calendarDay.equals(calendarToday)){
-                    CUR_STREAK_NUM++;
+                    CUR_STREAK=CUR_STREAK+1;
+//                    Log.d("CUR_STREAK",CUR_STREAK+" 1");
                 } else {
-                    CUR_STREAK_NUM = 1;
+                    CUR_STREAK = 1;
+//                    Log.d("CUR_STREAK",CUR_STREAK+" 2");
                 }
             }
         } else {
-            CUR_STREAK_NUM++;
+            CUR_STREAK=CUR_STREAK+1;
+//            Log.d("CUR_STREAK",CUR_STREAK+" 3");
             addDate();
         }
-
-    }
-
-    private void calBestStreakNum(){
-        if (CUR_STREAK_NUM>BEST_STREAK_NUM) BEST_STREAK_NUM = CUR_STREAK_NUM;
     }
 
     //danh dau ngay tap
@@ -231,5 +238,53 @@ public class FinishActivity extends AppCompatActivity {
                 });
         AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    private void readResultFromFireBase(){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("result");
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                try {
+                    long WORKOUT_NUM = (long) dataSnapshot.child("WORKOUT_NUM").getValue();
+                    long MINUTES_NUM = (long) dataSnapshot.child("MINUTES_NUM").getValue();
+                    long CALORIES_NUM = (long) dataSnapshot.child("CALORIES_NUM").getValue();
+                    long CUR_STREAK_NUM = (long) dataSnapshot.child("CUR_STREAK_NUM").getValue();
+                    long BEST_STREAK_NUM = (long) dataSnapshot.child("BEST_STREAK_NUM").getValue();
+                    FinishActivity.this.WORKOUT_NUM = (int) WORKOUT_NUM;
+                    FinishActivity.this.MINUTES_NUM = (int) MINUTES_NUM;
+                    FinishActivity.this.CALORIES_NUM = (int) CALORIES_NUM;
+                    FinishActivity.this.CUR_STREAK_NUM = (int) CUR_STREAK_NUM;
+                    FinishActivity.this.BEST_STREAK_NUM = (int) BEST_STREAK_NUM;
+                    //Toast.makeText(FinishActivity.this,"Loaded",Toast.LENGTH_SHORT).show();
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void addResultToFireBase(){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("result");
+        myRef.child("WORKOUT_NUM").setValue(WORKOUT_NUM+1);
+        myRef.child("MINUTES_NUM").setValue(MINUTES_NUM+workout.getTime());
+        myRef.child("CALORIES_NUM").setValue(CALORIES_NUM+workout.getCalorie());
+        if (CUR_STREAK==1 || CUR_STREAK==3){
+            myRef.child("CUR_STREAK_NUM").setValue(CUR_STREAK_NUM+1);
+            if (CUR_STREAK_NUM+1>BEST_STREAK) BEST_STREAK= CUR_STREAK_NUM+1;
+        } else{
+            myRef.child("CUR_STREAK_NUM").setValue(1);
+            if (1>BEST_STREAK) BEST_STREAK= 1;
+        }
+        myRef.child("BEST_STREAK_NUM").setValue(BEST_STREAK);
+        Log.d("CUR_STREAK",CUR_STREAK+" 5");
+        Toast.makeText(FinishActivity.this,"Added",Toast.LENGTH_SHORT).show();
     }
 }
