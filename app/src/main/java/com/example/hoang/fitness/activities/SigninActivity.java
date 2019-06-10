@@ -122,8 +122,7 @@ public class SigninActivity extends AppCompatActivity implements View.OnClickLis
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                //handleFacebookAccessToken(loginResult.getAccessToken());
-                updateUI();
+                handleFacebookAccessToken(loginResult.getAccessToken());
             }
 
             @Override
@@ -209,7 +208,7 @@ public class SigninActivity extends AppCompatActivity implements View.OnClickLis
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             firebaseAuthWithGoogle(account);
             // Signed in successfully, show authenticated UI.
-            updateUI();
+            //updateUI();
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.

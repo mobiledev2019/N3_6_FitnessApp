@@ -30,7 +30,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:padding="@dimen/_10sdp">
+        android:padding="@dimen/_10sdp"
+        >
 
         <Button
             android:id="@+id/btn_nextstep"
@@ -39,8 +40,7 @@
             android:background="@drawable/roundrect_green"
             android:text="NEXT STEP"
             android:textColor="#fff"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-            android:enabled="false"
+            android:alpha="0.5"
             />
     </LinearLayout>
 </RelativeLayout>

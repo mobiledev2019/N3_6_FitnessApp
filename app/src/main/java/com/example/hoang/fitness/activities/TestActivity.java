@@ -20,7 +20,6 @@ public class TestActivity extends AppCompatActivity {
         findViewById(R.id.btn_add).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 FirebaseDatabase.getInstance().setPersistenceEnabled(true);
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 FirebaseDatabase database = FirebaseDatabase.getInstance();

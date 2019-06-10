@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.example.hoang.fitness.R;
 import com.example.hoang.fitness.activities.ExerciseDescriptionActivity;
-import com.example.hoang.fitness.models.Exercise;
+import com.example.hoang.fitness.listener.ItemOnClick;
 import com.example.hoang.fitness.models.ExercisePick;
 import com.example.hoang.fitness.utils.AssetsUtil;
 
@@ -26,12 +26,14 @@ import butterknife.ButterKnife;
 public class PickExerciseAdapter extends RecyclerView.Adapter<PickExerciseAdapter.ViewHolder> {
     private Context context;
     private List<ExercisePick> arrayList;
-    private boolean isChoose;
+    private int count;
+    ItemOnClick listener;
 
-    public PickExerciseAdapter(Context context, List<ExercisePick> arrayList) {
+    public PickExerciseAdapter(Context context, List<ExercisePick> arrayList, ItemOnClick listener, int count) {
         this.context = context;
         this.arrayList = arrayList;
-        isChoose = false;
+        this.count = count;
+        this.listener = listener;
     }
 
     @NonNull
@@ -43,6 +45,8 @@ public class PickExerciseAdapter extends RecyclerView.Adapter<PickExerciseAdapte
 
     @Override
     public void onBindViewHolder(@NonNull PickExerciseAdapter.ViewHolder holder, int position) {
+//        if (count==3) holder.mLayout.setClickable(false);
+//        else holder.mLayout.setClickable(true);
         holder.mImage.setImageDrawable(AssetsUtil.getDrawable(
                 context,"exercise_pic/"+arrayList.get(position).getExercise().getPic()));
         holder.mName.setText(arrayList.get(position).getExercise().getName());
@@ -59,11 +63,15 @@ public class PickExerciseAdapter extends RecyclerView.Adapter<PickExerciseAdapte
                 context.startActivity(intent);
             }
         });
-        holder.mChoose.setOnClickListener(new View.OnClickListener() {
+        holder.mLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                arrayList.get(position).setChoose(!arrayList.get(position).isChoose());
-                notifyDataSetChanged();
+                boolean isChoose = !arrayList.get(position).isChoose();
+                if (count!=3 || !isChoose){
+                    arrayList.get(position).setChoose(isChoose);
+                    listener.clickItem(position, isChoose);
+                    notifyDataSetChanged();
+                }
             }
         });
     }
@@ -85,6 +93,8 @@ public class PickExerciseAdapter extends RecyclerView.Adapter<PickExerciseAdapte
         TextView mName;
         @BindView(R.id.btn_pick_exercise_info)
         Button mInfo;
+        @BindView(R.id.rl_item_exercise)
+        RelativeLayout mLayout;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this,itemView);
