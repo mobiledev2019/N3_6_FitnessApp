@@ -3,7 +3,7 @@
     package="com.example.hoang.fitness">
     <uses-permission android:name="android.permission.INTERNET" />
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="7 MINUTE"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -51,6 +51,10 @@
             <!--</intent-filter>-->
         </activity>
         <activity android:name=".activities.WorkoutDetailActivity"
+            android:parentActivityName=".activities.MainActivity"
+            >
+        </activity>
+        <activity android:name=".activities.WorkoutDetailActivity2"
             android:parentActivityName=".activities.MainActivity"
             >
         </activity>

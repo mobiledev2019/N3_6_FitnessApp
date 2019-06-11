@@ -80,8 +80,8 @@ public class TargetFragment extends Fragment implements View.OnClickListener {
             arr[i] = JsonUtil.getInstance().getListWorkout(getContext()).get(i).getName();
         }
         setDialogTarget();
-        //list = FileUtil.docFileTarget(getActivity(),"target.txt");
-        getListTargetFromFireBase();
+        list = FileUtil.docFileTarget(getActivity(),"target.txt");
+        //getListTargetFromFireBase();
         adapter = new TargetAdapter(getContext(), list);
         mTargets.setAdapter(adapter);
         mTargets.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
@@ -182,7 +182,7 @@ public class TargetFragment extends Fragment implements View.OnClickListener {
                     pendingIntent[list.size() - 1]);
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
                     calendar.getTimeInMillis(), 120 * 1000, pendingIntent[list.size() - 1]);
-            addTargetToFireBase(target);
+            //addTargetToFireBase(target);
         } catch (Exception e) {
 
         }

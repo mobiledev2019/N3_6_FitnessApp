@@ -1,10 +1,8 @@
 package com.example.hoang.fitness.activities;
 
-import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.media.MediaPlayer;
-import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -15,13 +13,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.hoang.fitness.R;
+import com.example.hoang.fitness.models.CustomWorkout;
 import com.example.hoang.fitness.models.Exercise;
 import com.example.hoang.fitness.models.Workout;
 import com.example.hoang.fitness.sound.SoundManager;
-import com.example.hoang.fitness.utils.AssetsUtil;
+import com.example.hoang.fitness.utils.FileUtil;
 import com.example.hoang.fitness.utils.JsonUtil;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -62,13 +62,15 @@ public class PlayingActivity extends AppCompatActivity implements View.OnClickLi
     int currentPos = 0;
     boolean isFinish = false;
     boolean isPlaying = true;
-    Workout workout;
-    List<Exercise> list;
+    List<Exercise> list = new ArrayList<>();
     private int WORKOUT_ID;
+    private String WORKOUT_NAME;
     private String TARGET_NAME;
     Thread thread;
     SoundManager soundManager;
     MediaPlayer mediaPlayer;
+    List<CustomWorkout> customWorkouts;
+    CustomWorkout workout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,9 +85,34 @@ public class PlayingActivity extends AppCompatActivity implements View.OnClickLi
         soundManager = new SoundManager(this);
         soundManager.setup();
         WORKOUT_ID = getIntent().getIntExtra("WORKOUT_ID", 0);
+        WORKOUT_NAME = getIntent().getStringExtra("WORKOUT_NAME");
         TARGET_NAME = getIntent().getStringExtra("TARGET_NAME");
-        workout = JsonUtil.getInstance().getWorkout(this, WORKOUT_ID);
-        list = JsonUtil.getInstance().getListExercise(this, workout);
+        if (!WORKOUT_NAME.isEmpty()){
+            customWorkouts = FileUtil.docFileCustomWorkout(this,"customworkout.txt");
+            for (int i=0; i<customWorkouts.size();i++)
+                if (WORKOUT_NAME.equals(customWorkouts.get(i).getName())) {
+                    workout = customWorkouts.get(i);
+                    List<Exercise> list = JsonUtil.getInstance().getListExercise(this,workout);
+                    for (int j=0;j<workout.getCircuit();j++) this.list.addAll(list);
+                    break;
+                }
+        } else {
+            Workout w = JsonUtil.getInstance().getWorkout(this, WORKOUT_ID);
+            list = JsonUtil.getInstance().getListExercise(this, w);
+            workout.setBrief(w.getBrief());
+            workout.setCalorie(w.getCalorie());
+            workout.setCircuit(1);
+            workout.setExercises(w.getExercises());
+            workout.setId(w.getId());
+            workout.setLevel(w.getLevel());
+            workout.setName(w.getName());
+            workout.setOrder(w.getOrder());
+            workout.setPicPad(w.getPicPad());
+            workout.setPicPhone(w.getPicPhone());
+            workout.setTime(w.getTime());
+            workout.setType(w.getType());
+            workout.setWorkoutRestTime(0);
+        }
         updateValue();
         updateView();
         mExit.setOnClickListener(this::onClick);
@@ -120,8 +147,13 @@ public class PlayingActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     public void updateValue() {
-        readyTime = workout.getExercises().get(currentPos).getGetReady();
-        spanTime = workout.getExercises().get(currentPos).getTimeSpan();
+        if (workout.getWorkoutRestTime()>0) {
+            readyTime = workout.getWorkoutRestTime();
+        } else {
+            readyTime = workout.getExercises().get(currentPos%12).getGetReady();
+        }
+        spanTime = workout.getExercises().get(currentPos%12).getTimeSpan();
+
 //        readyTime = 3;
 //        spanTime = 5;
         GifDrawable gifFromAssets = null;
@@ -259,13 +291,13 @@ public class PlayingActivity extends AppCompatActivity implements View.OnClickLi
                         soundManager.one.start();
                     } else if (readyTime > 0 || spanTime > 0) {
                         if (spanTime > 0) {
-                            if (spanTime == workout.getExercises().get(currentPos).getTimeSpan() / 2) {
+                            if (spanTime == workout.getExercises().get(currentPos%12).getTimeSpan() / 2) {
                                 soundManager.halfwaythere.start();
-                            } else if (readyTime == 0 && spanTime == workout.getExercises().get(currentPos).getTimeSpan()) {
+                            } else if (readyTime == 0 && spanTime == workout.getExercises().get(currentPos%12).getTimeSpan()) {
                                 soundManager.begin.start();
-                            } else if (readyTime == 0 && spanTime == workout.getExercises().get(currentPos).getTimeSpan()-1) {
+                            } else if (readyTime == 0 && spanTime == workout.getExercises().get(currentPos%12).getTimeSpan()-1) {
                                 soundManager.ding.start();
-                            } else if (readyTime == 0 && spanTime == workout.getExercises().get(currentPos).getTimeSpan()-2) {
+                            } else if (readyTime == 0 && spanTime == workout.getExercises().get(currentPos%12).getTimeSpan()-2) {
                                 initMedia();
                             }
                         }

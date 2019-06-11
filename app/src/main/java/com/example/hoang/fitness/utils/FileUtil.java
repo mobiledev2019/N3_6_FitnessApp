@@ -2,6 +2,7 @@ package com.example.hoang.fitness.utils;
 
 import android.content.Context;
 
+import com.example.hoang.fitness.models.CustomWorkout;
 import com.example.hoang.fitness.models.Target;
 
 import java.io.File;
@@ -40,6 +41,43 @@ public class FileUtil {
     public static void ghiFileTarget(Context context, List<Target> listDeThi){
         try {
             File file = context.getFileStreamPath("target.txt");
+            FileOutputStream fos = new FileOutputStream(file);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(listDeThi);
+            oos.close();
+            fos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static List<CustomWorkout> docFileCustomWorkout(Context context, String fileName){
+        List<CustomWorkout> listDeThi = new ArrayList<>();
+        try {
+            File file = context.getFileStreamPath(fileName);
+            if (file==null||!file.exists()){
+                file = new File(fileName);
+            }
+            FileInputStream fis = new FileInputStream(file);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            listDeThi = (List<CustomWorkout>) ois.readObject();
+            ois.close();
+            fis.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return listDeThi;
+    }
+
+    public static void ghiFileCustomWorkout(Context context, List<CustomWorkout> listDeThi){
+        try {
+            File file = context.getFileStreamPath("customworkout.txt");
             FileOutputStream fos = new FileOutputStream(file);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(listDeThi);

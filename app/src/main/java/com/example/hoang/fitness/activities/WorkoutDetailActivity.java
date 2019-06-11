@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -19,7 +18,6 @@ import com.example.hoang.fitness.models.Workout;
 import com.example.hoang.fitness.utils.AssetsUtil;
 import com.example.hoang.fitness.utils.JsonUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -44,16 +42,22 @@ public class WorkoutDetailActivity extends AppCompatActivity implements View.OnC
     private List<Exercise> list;
     private Workout workout;
     private int WORKOUT_ID;
+    private String WORKOUT_NAME;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workout_detail);
         ButterKnife.bind(this);
         WORKOUT_ID = getIntent().getIntExtra("WORKOUT_ID",0);
+        if (WORKOUT_ID==0) WORKOUT_NAME = getIntent().getStringExtra("WORKOUT_NAME");
         workout = JsonUtil.getInstance().getWorkout(this,WORKOUT_ID);
         mImage.setImageDrawable(AssetsUtil.getDrawable(this,"workout_pic/"+workout.getPicPhone()));
         mName.setText(workout.getName());
-        mDetail.setText(workout.getLevel()+" • "+ workout.getTime()+" mins • "+ workout.getCalorie()+" calories");
+        if (WORKOUT_ID==0) {
+            mDetail.setText(workout.getLevel()+" • "+ workout.getTime()+" mins • "+ workout.getCalorie()+" calories");
+        } else {
+            mDetail.setText(workout.getLevel()+" • "+ workout.getTime()+" mins • "+ workout.getCalorie()+" calories");
+        }
         mDes.setText(workout.getBrief());
         mCount.setText(workout.getExercises().size()+" EXERCISES");
         list = JsonUtil.getInstance().getListExercise(this,workout);

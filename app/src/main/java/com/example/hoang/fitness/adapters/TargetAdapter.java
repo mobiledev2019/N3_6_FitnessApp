@@ -9,15 +9,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import com.example.hoang.fitness.R;
 import com.example.hoang.fitness.activities.DetailTargetActivity;
-import com.example.hoang.fitness.activities.WorkoutDetailActivity;
 import com.example.hoang.fitness.fragments.TargetFragment;
 import com.example.hoang.fitness.models.Target;
-import com.example.hoang.fitness.models.Workout;
 import com.example.hoang.fitness.utils.FileUtil;
 
 import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -68,9 +68,13 @@ public class TargetAdapter extends RecyclerView.Adapter<TargetAdapter.ViewHolder
             public boolean onLongClick(View v) {
                 arrayList.remove(position);
                 FileUtil.ghiFileTarget(context,arrayList);
-                TargetFragment.alarmManager.cancel(
-                        TargetFragment.pendingIntent[position]
-                );
+                try {
+                    TargetFragment.alarmManager.cancel(
+                            TargetFragment.pendingIntent[position]
+                    );
+                } catch (Exception e){
+                }
+
                 notifyDataSetChanged();
                 return false;
             }

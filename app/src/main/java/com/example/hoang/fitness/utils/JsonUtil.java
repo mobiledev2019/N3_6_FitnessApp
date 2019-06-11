@@ -1,21 +1,14 @@
 package com.example.hoang.fitness.utils;
 
 import android.content.Context;
-import android.util.Log;
 
-import com.example.hoang.fitness.R;
+import com.example.hoang.fitness.models.CustomWorkout;
 import com.example.hoang.fitness.models.Exercise;
 import com.example.hoang.fitness.models.Workout;
 import com.example.hoang.fitness.models.WorkoutExercise;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -52,6 +45,23 @@ public class JsonUtil {
     }
 
     public List<Exercise> getListExercise(Context context,Workout workout){
+        List<Exercise> list = new ArrayList<>();
+        List<WorkoutExercise> workoutExerciseList = workout.getExercises();
+        String json=AssetsUtil.inputStreamToString(context,"jsondata/exercise.json");
+        Gson gson = new GsonBuilder().create();
+        Exercise[] exercises = gson.fromJson(json,Exercise[].class);
+        for (int i=0;i<workoutExerciseList.size();i++){
+            for (int j=0;j<exercises.length;j++){
+                if (workoutExerciseList.get(i).getId().equals(exercises[j].getId())){
+                    list.add(exercises[j]);
+                    break;
+                }
+            }
+        }
+        return list;
+    }
+
+    public List<Exercise> getListExercise(Context context, CustomWorkout workout){
         List<Exercise> list = new ArrayList<>();
         List<WorkoutExercise> workoutExerciseList = workout.getExercises();
         String json=AssetsUtil.inputStreamToString(context,"jsondata/exercise.json");

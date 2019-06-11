@@ -10,15 +10,22 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.hoang.fitness.R;
 import com.example.hoang.fitness.activities.PickExerciseActivity;
 import com.example.hoang.fitness.adapters.CustomWorkoutAdapter;
-import com.example.hoang.fitness.models.Workout;
-import com.example.hoang.fitness.utils.JsonUtil;
+import com.example.hoang.fitness.models.CustomWorkout;
+import com.example.hoang.fitness.utils.FileUtil;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +41,7 @@ public class CustomFragment extends Fragment implements View.OnClickListener {
     @BindView(R.id.tv_tap_to_start)
     TextView mTapToStart;
     private CustomWorkoutAdapter adapter;
-    private List<Workout> list;
+    private List<CustomWorkout> list = new ArrayList<>();
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -42,9 +49,9 @@ public class CustomFragment extends Fragment implements View.OnClickListener {
         ButterKnife.bind(this,view);
         getActivity().findViewById(R.id.tv_title_main).setVisibility(View.GONE);
         getActivity().findViewById(R.id.btn_setting).setVisibility(View.GONE);
-        //list = new ArrayList<>();
-        list = JsonUtil.getInstance().getListWorkout(getContext());
-        adapter = new CustomWorkoutAdapter(getContext(),list.subList(0,2));
+        //getListCustomWorkoutFromFireBase();
+        list = FileUtil.docFileCustomWorkout(this.getContext(),"customworkout.txt");
+        adapter = new CustomWorkoutAdapter(getContext(),list);
         mCustomWorkouts.setAdapter(adapter);
         mCustomWorkouts.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));
         mAddCustomWorkouts.setOnClickListener(this::onClick);
@@ -57,6 +64,13 @@ public class CustomFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
+    public void onStart() {
+        List<CustomWorkout> list = FileUtil.docFileCustomWorkout(this.getContext(),"customworkout.txt");
+        updateListCustomWorkout(list);
+        super.onStart();
+    }
+
+    @Override
     public void onClick(View v) {
         Intent intent = new Intent(getContext(), PickExerciseActivity.class);
         startActivity(intent);
@@ -66,5 +80,43 @@ public class CustomFragment extends Fragment implements View.OnClickListener {
             mTapToStart.setVisibility(View.GONE);
         }
 
+    }
+
+    public void getListCustomWorkoutFromFireBase() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = database.getReference().child("users");
+        DatabaseReference currentUserDB = databaseReference.child(user.getUid());
+        DatabaseReference myRef = currentUserDB.child("customWorkouts");
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<CustomWorkout> list = new ArrayList<>();
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    CustomWorkout value = data.getValue(CustomWorkout.class);
+                    list.add(value);
+                }
+                updateListCustomWorkout(list);
+                Toast.makeText(getContext(),"Loaded",Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void updateListCustomWorkout(List<CustomWorkout> list) {
+        this.list.clear();
+        this.list.addAll(list);
+        adapter = new CustomWorkoutAdapter(getContext(), this.list);
+        mCustomWorkouts.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+        if (list.size() == 0) {
+            mTapToStart.setVisibility(View.VISIBLE);
+        } else {
+            mTapToStart.setVisibility(View.GONE);
+        }
     }
 }

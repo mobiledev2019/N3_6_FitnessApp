@@ -7,15 +7,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.hoang.fitness.R;
-import com.example.hoang.fitness.activities.WorkoutDetailActivity;
-import com.example.hoang.fitness.models.Workout;
-import com.example.hoang.fitness.utils.AssetsUtil;
+import com.example.hoang.fitness.activities.WorkoutDetailActivity2;
+import com.example.hoang.fitness.models.CustomWorkout;
 
 import java.util.List;
 
@@ -24,10 +21,10 @@ import butterknife.ButterKnife;
 
 public class CustomWorkoutAdapter extends RecyclerView.Adapter<CustomWorkoutAdapter.ViewHolder> {
     private Context context;
-    private List<Workout> arrayList;
+    private List<CustomWorkout> arrayList;
 
 
-    public CustomWorkoutAdapter(Context context, List<Workout> arrayList) {
+    public CustomWorkoutAdapter(Context context, List<CustomWorkout> arrayList) {
         this.context = context;
         this.arrayList = arrayList;
     }
@@ -46,8 +43,8 @@ public class CustomWorkoutAdapter extends RecyclerView.Adapter<CustomWorkoutAdap
         holder.mLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, WorkoutDetailActivity.class);
-                intent.putExtra("WORKOUT_ID",arrayList.get(position).getId());
+                Intent intent = new Intent(context, WorkoutDetailActivity2.class);
+                intent.putExtra("WORKOUT_NAME",arrayList.get(position).getName());
                 context.startActivity(intent);
             }
         });
