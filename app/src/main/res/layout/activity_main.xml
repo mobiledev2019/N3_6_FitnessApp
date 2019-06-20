@@ -21,6 +21,17 @@
         />
 
     <ImageView
+        android:id="@+id/btn_medal"
+        android:layout_width="@dimen/_20sdp"
+        android:layout_height="@dimen/_20sdp"
+        android:layout_marginRight="@dimen/_20sdp"
+        android:src="@drawable/ic_bronze_medal"
+        android:layout_alignBottom="@+id/tv_title_main"
+        android:layout_alignTop="@+id/tv_title_main"
+        android:layout_toLeftOf="@+id/btn_setting"
+        />
+
+    <ImageView
         android:id="@+id/btn_setting"
         android:layout_width="@dimen/_20sdp"
         android:layout_height="@dimen/_20sdp"

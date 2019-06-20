@@ -188,6 +188,28 @@ public class TargetFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    public void updateListTarget(List<Target> list) {
+        this.list.clear();
+        this.list.addAll(list);
+        adapter = new TargetAdapter(getContext(), this.list);
+        mTargets.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+        if (list.size() == 0) {
+            mTapToStart.setVisibility(View.VISIBLE);
+        } else {
+            mTapToStart.setVisibility(View.GONE);
+        }
+    }
+
+    public void addTargetToFireBase(Target target) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = database.getReference().child("users");
+        DatabaseReference currentUserDB = databaseReference.child(user.getUid());
+        DatabaseReference myRef = currentUserDB.child("targets");
+        myRef.child(target.getName()).setValue(target);
+    }
+
     public void getListTargetFromFireBase() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -211,27 +233,5 @@ public class TargetFragment extends Fragment implements View.OnClickListener {
 
             }
         });
-    }
-
-    public void updateListTarget(List<Target> list) {
-        this.list.clear();
-        this.list.addAll(list);
-        adapter = new TargetAdapter(getContext(), this.list);
-        mTargets.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
-        if (list.size() == 0) {
-            mTapToStart.setVisibility(View.VISIBLE);
-        } else {
-            mTapToStart.setVisibility(View.GONE);
-        }
-    }
-
-    public void addTargetToFireBase(Target target) {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = database.getReference().child("users");
-        DatabaseReference currentUserDB = databaseReference.child(user.getUid());
-        DatabaseReference myRef = currentUserDB.child("targets");
-        myRef.child(target.getName()).setValue(target);
     }
 }

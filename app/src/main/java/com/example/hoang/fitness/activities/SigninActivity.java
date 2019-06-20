@@ -220,5 +220,6 @@ public class SigninActivity extends AppCompatActivity implements View.OnClickLis
     private void updateUI(){
         Intent intent = new Intent(SigninActivity.this, MainActivity.class);
         startActivity(intent);
+        finish();
     }
 }

@@ -68,6 +68,7 @@
         <activity android:name=".activities.PlayingActivity"
             android:parentActivityName=".activities.MainActivity"
             android:launchMode="singleTop"
+            android:showOnLockScreen="true"
             >
         </activity>
         <activity android:name=".activities.FinishActivity"
@@ -82,6 +83,11 @@
             >
         </activity>
         <activity android:name=".activities.SettingActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".activities.MainActivity"
+            >
+        </activity>
+        <activity android:name=".activities.MedalActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".activities.MainActivity"
             >

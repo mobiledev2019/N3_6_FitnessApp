@@ -64,7 +64,7 @@ public class PlayingActivity extends AppCompatActivity implements View.OnClickLi
     boolean isPlaying = true;
     List<Exercise> list = new ArrayList<>();
     private int WORKOUT_ID;
-    private String WORKOUT_NAME;
+    private String WORKOUT_NAME="";
     private String TARGET_NAME;
     Thread thread;
     SoundManager soundManager;
@@ -87,6 +87,11 @@ public class PlayingActivity extends AppCompatActivity implements View.OnClickLi
         WORKOUT_ID = getIntent().getIntExtra("WORKOUT_ID", 0);
         WORKOUT_NAME = getIntent().getStringExtra("WORKOUT_NAME");
         TARGET_NAME = getIntent().getStringExtra("TARGET_NAME");
+        try {
+            WORKOUT_NAME.isEmpty();
+        } catch (NullPointerException e){
+            WORKOUT_NAME = "";
+        }
         if (!WORKOUT_NAME.isEmpty()){
             customWorkouts = FileUtil.docFileCustomWorkout(this,"customworkout.txt");
             for (int i=0; i<customWorkouts.size();i++)
@@ -97,6 +102,7 @@ public class PlayingActivity extends AppCompatActivity implements View.OnClickLi
                     break;
                 }
         } else {
+            workout = new CustomWorkout();
             Workout w = JsonUtil.getInstance().getWorkout(this, WORKOUT_ID);
             list = JsonUtil.getInstance().getListExercise(this, w);
             workout.setBrief(w.getBrief());
@@ -273,7 +279,7 @@ public class PlayingActivity extends AppCompatActivity implements View.OnClickLi
                     }
                 });
                 try {
-                    Thread.sleep(1000);
+                    thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -359,4 +365,14 @@ public class PlayingActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onBackPressed() {
     }
+
+//    @Override
+//    public void onAttachedToWindow() {
+//        super.onAttachedToWindow();
+//        Window window = getWindow();
+//        window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+//                | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+//                | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+//                | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+//    }
 }

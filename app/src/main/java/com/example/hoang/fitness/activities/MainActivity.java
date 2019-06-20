@@ -1,6 +1,7 @@
 package com.example.hoang.fitness.activities;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,8 @@ import com.example.hoang.fitness.R;
 import com.example.hoang.fitness.fragments.CustomFragment;
 import com.example.hoang.fitness.fragments.ProgressFragment;
 import com.example.hoang.fitness.fragments.WorkoutsFragment;
+import com.example.hoang.fitness.utils.DrawableUtil;
+import com.example.hoang.fitness.utils.SharedPrefsUtils;
 import com.google.firebase.FirebaseApp;
 
 import java.util.ArrayList;
@@ -24,6 +27,7 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity {
     @BindView(R.id.btn_setting)
     ImageView mSetting;
+    static ImageView mMedal;
     public static final int TAB_WORKOUTS = 0;
     public static final int TAB_CUSTOM = 1;
     public static final int TAB_PROGRESS = 2;
@@ -56,6 +60,21 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        mMedal = findViewById(R.id.btn_medal);
+        try {
+            String medal = SharedPrefsUtils.getStringPreference(this,"medal");
+            mMedal.setImageDrawable(DrawableUtil.getInstance().getDrawable(this,medal));
+        } catch (Exception e){
+
+        }
+
+        mMedal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,MedalActivity.class);
+                startActivity(intent);
+            }
+        });
         FirebaseApp.initializeApp(getApplicationContext());
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -74,5 +93,9 @@ public class MainActivity extends AppCompatActivity {
         manager.beginTransaction()
                 .replace(R.id.fr_home, listFragment.get(index))
                 .commit();
+    }
+
+    public static void updateMedal(Drawable drawable){
+        mMedal.setImageDrawable(drawable);
     }
 }
