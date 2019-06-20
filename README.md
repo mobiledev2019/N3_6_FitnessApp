@@ -42,7 +42,6 @@ Sử dụng cho những người có nhu cầu tập thể dục một cách lin
 •	Khi hoàn thành xong mỗi bài tập sẽ nhận được 1 lượng coin tương ứng với độ khó bài tập
 
 III. Phân công công việc
-- Hoàng Văn Hiệp: Thiết kế giao diện, code java màn Detail Workout Activity, CustomWorkout Fragment, TargetFragment, màn mua icon, ghép nối các module. 
-- Hoàng Ngọc Nga: Thiết kế giao diện, code java màn Workout Fragment, màn luyện tập bài tập PlayingActivity và màn hiển thị kết quả Finish Activity. 
-- Phạm Thị Mai: Thiết kế giao diện, code java màn DetailExercise Activity, Calendar Fragment, Weight Fragment.
-
+- Hoàng Văn Hiệp: Thiết kế giao diện, code java màn CustomWorkout Fragment, TargetFragment, màn mua icon, ghép nối các module. 
+- Hoàng Ngọc Nga: Thiết kế giao diện, code java màn Workout Fragment, màn luyện tập bài tập PlayingActivity, Finish Activity. 
+- Phạm Thị Mai: Thiết kế giao diện, code java màn Detail Workout Activity , DetailExercise Activity, Calendar Fragment.
