@@ -3,7 +3,9 @@ Báo cáo môn phát triển ứng dụng di động
 Các thành viên:
 
 1, Hoàng Văn Hiệp MSV: B15DCCN207
+
 2, Hoàng Ngọc Nga MSV: B15DCCN384
+
 3, Phạm Thị Mai MSV: B15DCCN336
 
 - Tên ứng dụng: 7M WORKOUT
